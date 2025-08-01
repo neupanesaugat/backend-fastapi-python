@@ -6,6 +6,7 @@ from app import token, services, models
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
+# Dependency to get the database session
 def get_db():
     db = SessionLocal()
     try:
@@ -13,6 +14,7 @@ def get_db():
     finally:
         db.close()
 
+# Dependency to get the current user
 def get_current_user(token_str: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
