@@ -1,5 +1,6 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
+
 from sqlalchemy.orm import Session
 from app import  schemas, services, token
 from app.database import Base, SessionLocal, engine
@@ -29,7 +30,7 @@ def get_db():
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = services.get_user_by_email(db, user.email)
     if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
     return services.create_user(db, user)
 
 # POST endpoint for user login
