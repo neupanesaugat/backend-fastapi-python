@@ -1,5 +1,5 @@
-
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 
 # Define the schemas for user operations
 class UserCreate(BaseModel):
@@ -16,6 +16,7 @@ class UserOut(BaseModel):
     lastname: str
     email: EmailStr
     
+
 # Schema for user login
 class UserLogin(BaseModel):
     email: EmailStr

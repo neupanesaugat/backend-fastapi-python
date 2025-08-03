@@ -24,6 +24,7 @@ def get_db():
         yield db
     finally:
         db.close()
+session = get_db()
 
 # POST endpoint for user registration
 @router.post("/register", response_model=schemas.UserOut)
@@ -38,7 +39,7 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
     authenticated_user = services.authenticate_user(db, user.email, user.password)
     if not authenticated_user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
     access_token = token.create_access_token(data={"email": authenticated_user.email})
     return {
@@ -65,19 +66,16 @@ def list_users(db: Session = Depends(get_db)):
 def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
     user = services.get_user_by_id(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return user
 
 
 # DELETE endpoint to delete a user by ID
-@router.delete("/delete/{user_id}", status_code=200)
+@router.delete("/delete/{user_id}", status_code=status.HTTP_200_OK)
 def delete_user_by_id(user_id: int, db: Session = Depends(get_db)):
     user = services.get_user_by_id(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     services.delete_user_by_id(db, user_id)
     return {"message": f"User with id {user_id} deleted successfully."}
-
-
-
 
